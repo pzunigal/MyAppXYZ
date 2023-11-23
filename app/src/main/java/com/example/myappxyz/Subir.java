@@ -18,11 +18,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.text.DateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +36,7 @@ public class Subir extends AppCompatActivity {
 
     EditText nombre, marca, precio;
     ImageView uploadImage;
+    String imageURL;
     Button guarda;
     Uri uri;
 
@@ -76,7 +83,7 @@ public class Subir extends AppCompatActivity {
     private void saveData() {
         StorageReference storageReference = FirebaseStorage.getInstance().getReference().child("Inf")
                 .child(uri.getLastPathSegment());
-        AlertDialog.Builder builder = new AlertDialog.Builder(subir.this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(Subir.this);
         builder.setCancelable(false);
         builder.setView(R.layout.progress_layout);
         AlertDialog dialog = builder.create();
@@ -99,6 +106,25 @@ public class Subir extends AppCompatActivity {
                 dialog.dismiss();
             }
         });
+    }
+
+    public void uploadData() {
+        String nombres = nombre.getText().toString();
+        String marcas = marca.getText().toString();
+        String precios = precio.getText().toString();
+        DataClass dataClass = new DataClass(nombres, marcas, precios, imageURL);
+
+        String currentData = DateFormat.getDateTimeInstance().format(Calendar.getInstance().getTime());
+        FirebaseDatabase.getInstance().getReference("Androids y Iphones").child(currentData)
+                .setValue(dataClass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(Subir.this,"Saved",Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
     }
 
 }

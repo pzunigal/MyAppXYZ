@@ -7,7 +7,7 @@ public class DataClass {
     private String dataImage;
     private String key;
 
-    public DataClass(String nombre, String marca, String precio, String imageURL) {
+    public DataClass(String nombres, String marcas, String precios, String imageURL) {
     }
 
     public DataClass(String dataNombre, String dataMarca, String dataPrecio, String dataImage, String key) {
